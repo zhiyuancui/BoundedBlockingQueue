@@ -6,8 +6,7 @@
  * the adding thread until there is available space meanwhile when 
  * this queue is empty, the removing thread will be blocked until 
  * next item been put into queue.
- * Plarform: Windows 8
- * Last Modified:
+ * Last Modified:09/06/2015
  */
 
 package Test;
@@ -31,9 +30,9 @@ public class BlockingQueue<E> {
 	/** Main lock guarding all access */
     private final ReentrantLock lock;
     /** Condition for waiting takes */
-    private final Condition notEmpty;
+    private final Condition isEmpty;
     /** Condition for waiting puts */
-    private final Condition notFull;
+    private final Condition isFull;
 
 	/**
 	 * increase the index of queue
@@ -60,8 +59,8 @@ public class BlockingQueue<E> {
 		}
 		items    = (E[]) new Object[capacity];
 		lock     = new ReentrantLock(true);
-		notEmpty = lock.newCondition();
-		notFull  = lock.newCondition();
+		isEmpty = lock.newCondition();
+		isFull  = lock.newCondition();
 	}
 	
 	
@@ -93,7 +92,7 @@ public class BlockingQueue<E> {
 			lock.lock();
 			while( count == items.length )
 			{
-				notFull.await();
+				isFull.await();
 			}
 		}catch(InterruptedException ex)
 		{
@@ -103,7 +102,7 @@ public class BlockingQueue<E> {
 		items[ tail ] = e;
 		tail = inc(tail);
 		count++;
-		notEmpty.signal();
+		isEmpty.signal();
 		lock.unlock();
 
 	}
@@ -120,7 +119,7 @@ public class BlockingQueue<E> {
 			lock.lock();
 			while( count == 0 )
 			{
-				notEmpty.await();
+				isEmpty.await();
 			}
 		} catch(InterruptedException e)
 		{
@@ -132,7 +131,7 @@ public class BlockingQueue<E> {
 		head = inc(head);
 		count--;
 		
-		notFull.signal();
+		isFull.signal();
 		lock.unlock();
 
 		return tmp;

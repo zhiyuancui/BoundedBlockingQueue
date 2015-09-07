@@ -1,14 +1,17 @@
+/**
+ * Date: 09/06/2015
+ * Description: This class is used to run bounded blocking queue.
+ * Last Modified:09/06/2015
+ */
 package Test;
-
-import java.util.concurrent.ArrayBlockingQueue;
-
-
 
 
 public class Test {
 	
+	/** the bounded blocking queue instance*/
 	private BlockingQueue<Integer> q = new BlockingQueue<Integer>(3);
 	
+	/** the Producer class*/
 	class Producer extends Thread
 	{
 		int count = 0;
@@ -31,7 +34,7 @@ public class Test {
 	    }
 	}
 
-		
+	/** the Consumer class*/	
 	class Consumer extends Thread
 	{
 		@Override
