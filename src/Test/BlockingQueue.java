@@ -1,6 +1,11 @@
 /**
  * Date: 09/06/2015
- * Description: A implementation of bounded blocking queue with fair lock.
+ * Description: A implementation of bounded blocking queue 
+ * with fair lock. Bounded means this queue is a queue with fixed
+ * size. Blocking means when this queue is full, it will block all 
+ * the adding thread until there is available space meanwhile when 
+ * this queue is empty, the removing thread will be blocked until 
+ * next item been put into queue.
  * Plarform: Windows 8
  * Last Modified:
  */
@@ -102,7 +107,12 @@ public class BlockingQueue<E> {
 		lock.unlock();
 
 	}
-	
+		
+	/**
+	 * Remove an item from the head of queue.
+	 * If the queue is empty, it will wait for available item.
+	 * @return E the item been removed.
+	 */
 	public  E poll()
 	{
 		E tmp;
