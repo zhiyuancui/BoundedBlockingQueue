@@ -23,7 +23,7 @@ public class Test {
 	            try {
 	                Thread.sleep(1000);
 	                q.offer(count++);
-	                System.out.println("Producer1 added: ");
+	                System.out.println("Producer added: ");
 	            } catch (InterruptedException e) {
 	                e.printStackTrace();
 	            }
@@ -55,7 +55,7 @@ public class Test {
 	{
 		Test t = new Test();
 		Producer p1 = t.new Producer(1);
-		Producer p2 = t.new Producer(10);
+		Producer p2 = t.new Producer(20);
 		Consumer c1 = t.new Consumer();
 		
 		p1.start();

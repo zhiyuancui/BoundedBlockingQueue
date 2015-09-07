@@ -1,3 +1,10 @@
+/**
+ * Date: 09/06/2015
+ * Description: A implementation of bounded blocking queue with fair lock.
+ * Plarform: Windows 8
+ * Last Modified:
+ */
+
 package Test;
 
 import java.util.concurrent.*;
@@ -6,15 +13,28 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class BlockingQueue<E> {
 
+	/** the head index for poll the next element*/
 	private int head = 0;
+	/** the tail index for offer the next element in the queue*/
 	private int tail = 0;
+	/** number of items in the queue*/
 	private int count = 0;
+	/** the queued item*/
 	private E[] items;
-	private final ReentrantLock lock;
-	private final Condition notEmpty;
-	private final Condition notFull;
-
 	
+	
+	/** Main lock guarding all access */
+    private final ReentrantLock lock;
+    /** Condition for waiting takes */
+    private final Condition notEmpty;
+    /** Condition for waiting puts */
+    private final Condition notFull;
+
+	/**
+	 * increase the index of queue
+	 * @param index
+	 * @return 0 if the index meet the end of queue, otherwise return index++
+	 */
 	private int inc(int index)
 	{
 		return (++index == items.length) ? 0 : index;
