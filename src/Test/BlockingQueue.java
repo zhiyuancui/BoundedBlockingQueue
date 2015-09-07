@@ -40,7 +40,14 @@ public class BlockingQueue<E> {
 		return (++index == items.length) ? 0 : index;
 	}
 	
-	public BlockingQueue(int capacity)
+	
+	/**
+	 * Create a Bounded Blocking queue with fixed capacity
+	 * and access policy
+	 * @param capacity: the size of queue
+	 * @param fair: access policy
+	 */
+	public BlockingQueue(int capacity, boolean fair)
 	{
 		if (capacity <= 0)
 		{
@@ -52,6 +59,24 @@ public class BlockingQueue<E> {
 		notFull  = lock.newCondition();
 	}
 	
+	
+	/**
+	 * Create a Bounded Blocking queue with fixed capacity
+	 * and default access policy
+	 * @param capacity: the size of queue
+	 * @param fair: default is true
+	 */
+	public BlockingQueue(int capacity)
+	{
+		this(capacity,true);
+	}
+	
+	
+	/**
+	 * Put an item at the tail of queue.
+	 * If the queue is full, it will wait for available space
+	 * @param e: item will be put into queue
+	 */
 	public void offer(E e)
 	{
 		if( e == null )
@@ -59,46 +84,46 @@ public class BlockingQueue<E> {
 			throw new NullPointerException();
 		}
 		
-			try{
-				lock.lock();
-				while( count == items.length )
-				{
-					notFull.await();
-				}
-			}catch(InterruptedException ex)
+		try{
+			lock.lock();
+			while( count == items.length )
 			{
-				offer(e);
+				notFull.await();
 			}
-			
-			items[ tail ] = e;
-			tail = inc(tail);
-			count++;
-			notEmpty.signal();
-			lock.unlock();
+		}catch(InterruptedException ex)
+		{
+			offer(e);
+		}
+		
+		items[ tail ] = e;
+		tail = inc(tail);
+		count++;
+		notEmpty.signal();
+		lock.unlock();
 
 	}
 	
 	public  E poll()
 	{
 		E tmp;
-			try{
-				lock.lock();
-				while( count == 0 )
-				{
-					notEmpty.await();
-				}
-			} catch(InterruptedException e)
+		try{
+			lock.lock();
+			while( count == 0 )
 			{
-				return poll();
+				notEmpty.await();
 			}
-			
-			tmp =  items[ head ];
-			items[ head ] = null;
-			head = inc(head);
-			count--;
-			
-			notFull.signal();
-			lock.unlock();
+		} catch(InterruptedException e)
+		{
+			return poll();
+		}
+		
+		tmp =  items[ head ];
+		items[ head ] = null;
+		head = inc(head);
+		count--;
+		
+		notFull.signal();
+		lock.unlock();
 
 		return tmp;
 	}
